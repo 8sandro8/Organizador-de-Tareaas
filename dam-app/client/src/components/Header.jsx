@@ -1,13 +1,33 @@
-import { Monitor, Plus, Settings, Flame, Trophy, Stethoscope, Activity, LogOut } from 'lucide-react';
+import { useCallback, useMemo } from 'react';
+import { Monitor, Plus, Settings, Flame, Trophy, Stethoscope, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import LanguageSelector from './LanguageSelector';
 
 export default function Header({ subjectCount, stability, onOpenAddModal, onOpenSettings, gamification, theme = 'cyberpunk', onLogout }) {
+    const { t } = useTranslation(['common', 'dashboard']);
     const isSanidad = theme === 'sanidad';
     const { level = 1, xp = 0, streak = 0 } = gamification || {};
     const xpToNextLevel = level * 1000;
-    const xpProgress = (xp / xpToNextLevel) * 100;
+    const xpProgress = useMemo(() => (xp / xpToNextLevel) * 100, [xp, xpToNextLevel]);
 
-    const styles = {
+    const handleDownloadReport = useCallback(async () => {
+        try {
+            const response = await api.get('/reports/weekly', { responseType: 'blob' });
+            const blob = response.data;
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Reporte_${new Date().toLocaleDateString()}.md`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (err) {
+            console.error("Report extraction failed:", err);
+        }
+    }, []);
+
+    const styles = useMemo(() => ({
         header: isSanidad
             ? 'sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200 box-shadow-lg'
             : 'sticky top-0 z-40 bg-[#0d1117]/80 backdrop-blur-xl border-b border-[#30363d]',
@@ -68,7 +88,7 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
         addBtn: isSanidad
             ? 'flex items-center gap-3 bg-[#007FFF] text-white px-6 py-3 rounded-2xl font-semibold text-sm uppercase tracking-wide hover:scale-[1.03] active:scale-95 transition-all shadow-lg hover:shadow-[#007FFF]/30 group'
             : 'flex items-center gap-3 bg-neon-blue text-black px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-[1.03] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,240,255,0.2)] group',
-    };
+    }), [isSanidad]);
 
     return (
         <header className={`sticky top-0 z-40 ${isSanidad ? 'bg-white/90 backdrop-blur-md border-b border-slate-200' : 'bg-[#0d1117]/80 backdrop-blur-xl border-b border-[#30363d]'} box-border pt-[env(safe-area-inset-top)]`}>
@@ -91,7 +111,7 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
                             <div className="flex items-center gap-2 mt-0.5">
                                 <div className={styles.subtitleDot}></div>
                                 <span className={styles.subtitleText}>
-                                    {isSanidad ? 'Sistema activo' : 'Kernel_Online'}
+                                    {isSanidad ? t('common.systemActive') : 'Kernel_Online'}
                                 </span>
                             </div>
                         </div>
@@ -124,7 +144,7 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
                         </div>
                         <div className="flex flex-col">
                             <span className={styles.levelLabel}>
-                                {isSanidad ? 'Nivel' : 'Cyber_Level'}
+                                {isSanidad ? t('dashboard.level') : 'Cyber_Level'}
                             </span>
                             <div className={styles.progressBar}>
                                 <div
@@ -139,7 +159,7 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
                         <Flame className={`w-5 h-5 ${streak > 0 ? (isSanidad ? 'text-orange-500' : 'text-orange-500 animate-bounce') : (isSanidad ? 'text-slate-300' : 'text-gray-700')}`} />
                         <div className="flex flex-col">
                             <span className={styles.streakLabel}>
-                                {isSanidad ? 'Racha' : 'Streak'}
+                                {isSanidad ? t('dashboard.streak') : 'Streak'}
                             </span>
                             <span className={styles.streakValue}>{streak}D</span>
                         </div>
@@ -147,7 +167,7 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
 
                     <div className="flex-1 flex flex-col items-end">
                         <span className={styles.stabilityLabel}>
-                            {isSanidad ? 'Estabilidad del sistema' : 'System_Stability'}
+                            {isSanidad ? t('dashboard.systemStability') : 'System_Stability'}
                         </span>
                         <div className="flex items-center gap-2">
                             <div className={styles.stabilityBar}>
@@ -164,38 +184,26 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
                 </div>
 
                 <div className="flex items-center gap-3 shrink-0">
+                    <LanguageSelector />
+                    
                     <button
-                        onClick={async () => {
-                            try {
-                                const response = await api.get('/reports/weekly', { responseType: 'blob' });
-                                const blob = response.data;
-                                const url = window.URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                a.href = url;
-                                a.download = `Reporte_${new Date().toLocaleDateString()}.md`;
-                                document.body.appendChild(a);
-                                a.click();
-                                a.remove();
-                            } catch (err) {
-                                console.error("Report extraction failed:", err);
-                            }
-                        }}
+                        onClick={handleDownloadReport}
                         className={styles.actionBtn}
-                        title={isSanidad ? 'Generar Reporte Semanal' : 'Generar Reporte Semanal'}
+                        title={t('dashboard.weeklyReport')}
                     >
                         <Trophy className={isSanidad ? 'w-5 h-5' : 'w-4 h-4'} />
                     </button>
                     <button
                         onClick={onLogout}
                         className={styles.actionBtn}
-                        title={isSanidad ? 'Cerrar Sesión' : 'Cerrar Sesión'}
+                        title={t('common.logout')}
                     >
                         <LogOut className={isSanidad ? 'w-5 h-5' : 'w-4 h-4'} />
                     </button>
                     <button
                         onClick={onOpenSettings}
                         className={styles.settingsBtn}
-                        title={isSanidad ? 'Configuración de Módulos' : 'Configuración de Módulos'}
+                        title={t('common.settings')}
                     >
                         <Settings className={isSanidad ? 'w-5 h-5' : 'w-4 h-4'} />
                     </button>
@@ -205,7 +213,7 @@ export default function Header({ subjectCount, stability, onOpenAddModal, onOpen
                     >
                         <Plus className={`w-5 h-5 ${isSanidad ? '' : 'group-hover:rotate-90 transition-transform duration-300'}`} />
                         <span className="hidden sm:inline">
-                            {isSanidad ? 'Nueva Tarea' : 'Nueva Tarea'}
+                            {t('dashboard.newTask')}
                         </span>
                     </button>
                 </div>

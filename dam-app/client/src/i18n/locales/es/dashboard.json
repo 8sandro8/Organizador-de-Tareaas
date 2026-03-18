@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "newTask": "Nueva Tarea",
+    "allSubjects": "Todas las asignaturas",
+    "pending": "Pendientes",
+    "completed": "Completadas",
+    "level": "Nivel",
+    "streak": "Racha",
+    "systemStability": "Estabilidad del sistema",
+    "weeklyReport": "Generar Reporte Semanal",
+    "loading": "Cargando perfil...",
+    "tasks": "Tareas",
+    "subjects": "Asignaturas",
+    "refresh": "RECARGAR",
+    "refreshing": "RECARGANDO...",
+    "error": {
+      "title": "Error de conexión",
+      "message": "No se puede conectar con el servidor. Verifica tu conexión.",
+      "retry": "Reintentar"
+    },
+    "noModules": {
+      "title": "Advertencia: No se detectaron módulos cargados",
+      "subtitle": "Verifica la conexión con el Kernel o ejecuta el seed"
+    },
+    "subjectManager": "GESTOR DE MÓDULOS",
+    "completion": {
+      "title": "Finalizar Misión",
+      "learnedQuestion": "¿Qué hemos aprendido hoy? (Opcional)",
+      "placeholder": "Ej: Hoy vimos el patrón MVC en Java, muy útil para la arquitectura del backend...",
+      "preparing": "PREPARANDO_LOG_PARA_EL_HISTORIAL...",
+      "cancel": "Cancelar",
+      "complete": "Completar Tarea"
+    },
+    "xp": {
+      "taskCompleted": "Tarea_Completada_¡+50XP!",
+      "sessionFinished": "Sesión_Terminada_¡+100XP!"
+    },
+    "quickAdd": "Preparando_Registro_Rápido"
+  }
+}

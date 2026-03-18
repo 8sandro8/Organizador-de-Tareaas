@@ -1,0 +1,22 @@
+{
+  "app": {
+    "name": "ORGANIZADOR_TAREAS",
+    "subtitle": "Selecciona tu entorno de trabajo",
+    "loading": "Cargando..."
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "back": "Volver",
+    "settings": "Configuración",
+    "logout": "Cerrar Sesión",
+    "language": "Idioma",
+    "systemActive": "Sistema activo"
+  }
+}

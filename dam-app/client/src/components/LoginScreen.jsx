@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User, Shield, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { USER_PROFILES } from '../config/constants';
 
 function LoginScreen({ onLogin }) {
+  const { t } = useTranslation();
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -10,6 +12,10 @@ function LoginScreen({ onLogin }) {
     { ...USER_PROFILES.SANDRO, icon: Shield },
     { ...USER_PROFILES.MI_PAREJA, icon: Heart }
   ];
+
+  const handleSelect = useCallback((user) => {
+    setSelectedUser(user);
+  }, []);
 
   useEffect(() => {
     let timer;
@@ -24,17 +30,13 @@ function LoginScreen({ onLogin }) {
     };
   }, [selectedUser, onLogin]);
 
-  const handleSelect = (user) => {
-    setSelectedUser(user);
-  };
-
-  const getColorClasses = (color) => {
+  const getColorClasses = useCallback((color) => {
     const colors = {
       'neon-green': 'border-neon-green hover:border-neon-green hover:shadow-neon-green/30',
       'neon-pink': 'border-neon-pink hover:border-neon-pink hover:shadow-neon-pink/30'
     };
     return colors[color] || colors['neon-green'];
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0d1117] flex items-center justify-center p-4">
@@ -44,9 +46,9 @@ function LoginScreen({ onLogin }) {
             <User className="w-10 h-10 text-neon-blue" />
           </div>
           <h1 className="text-3xl font-mono font-bold text-white tracking-tight">
-            ORGANIZADOR<span className="text-neon-blue">_TAREAS</span>
+            {t('login.title')}
           </h1>
-          <p className="text-gray-500 text-sm font-mono">Selecciona tu entorno de trabajo</p>
+          <p className="text-gray-500 text-sm font-mono">{t('login.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
@@ -103,7 +105,7 @@ function LoginScreen({ onLogin }) {
         </div>
 
         <p className="text-center text-gray-600 text-xs font-mono">
-          tus datos se almacenan localmente
+          {t('login.storageNote')}
         </p>
       </div>
     </div>

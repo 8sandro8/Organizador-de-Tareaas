@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "newTask": "New Task",
+    "allSubjects": "All subjects",
+    "pending": "Pending",
+    "completed": "Completed",
+    "level": "Level",
+    "streak": "Streak",
+    "systemStability": "System Stability",
+    "weeklyReport": "Generate Weekly Report",
+    "loading": "Loading profile...",
+    "tasks": "Tasks",
+    "subjects": "Subjects",
+    "refresh": "REFRESH",
+    "refreshing": "REFRESHING...",
+    "error": {
+      "title": "Connection Error",
+      "message": "Cannot connect to the server. Check your connection.",
+      "retry": "Retry"
+    },
+    "noModules": {
+      "title": "Warning: No modules detected",
+      "subtitle": "Check the Kernel connection or run seed"
+    },
+    "subjectManager": "MODULE MANAGER",
+    "completion": {
+      "title": "Finish Mission",
+      "learnedQuestion": "What have we learned today? (Optional)",
+      "placeholder": "Ex: Today we saw the MVC pattern in Java, very useful for backend architecture...",
+      "preparing": "PREPARING_LOG_FOR_HISTORY...",
+      "cancel": "Cancel",
+      "complete": "Complete Task"
+    },
+    "xp": {
+      "taskCompleted": "Task_Completed_+50XP!",
+      "sessionFinished": "Session_Finished_+100XP!"
+    },
+    "quickAdd": "Preparing_Quick_Entry"
+  }
+}

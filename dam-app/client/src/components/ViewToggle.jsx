@@ -1,8 +1,12 @@
+import { useTranslation } from 'react-i18next';
+
 /**
  * ViewToggle - Componente para alternar entre vista Stats y Calendario
  * Extraído de Dashboard.jsx para mejorar modularidad
  */
 function ViewToggle({ showCalendar, onToggle }) {
+  const { t } = useTranslation(['dashboard', 'common']);
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -24,7 +28,7 @@ function ViewToggle({ showCalendar, onToggle }) {
               : 'border-[#30363d] text-gray-500 hover:text-gray-300'
           }`}
         >
-          Calendario
+          {t('dashboard.tasks', { defaultValue: 'Calendario' })}
         </button>
       </div>
     </div>

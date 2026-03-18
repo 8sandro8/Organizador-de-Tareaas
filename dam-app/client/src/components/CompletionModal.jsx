@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, CheckCircle2, MessageSquare, Terminal } from 'lucide-react';
 
 export default function CompletionModal({ isOpen, onClose, onConfirm, taskTitle }) {
+    const { t } = useTranslation(['dashboard', 'common']);
     const [note, setNote] = useState('');
 
-    if (!isOpen) return null;
-
-    const handleSubmit = () => {
+    const handleSubmit = useCallback(() => {
         onConfirm(note);
         setNote('');
-    };
+    }, [note, onConfirm]);
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -22,7 +24,7 @@ export default function CompletionModal({ isOpen, onClose, onConfirm, taskTitle 
                         <div className="w-8 h-8 bg-neon-green/10 border border-neon-green/20 rounded-lg flex items-center justify-center">
                             <CheckCircle2 className="w-4 h-4 text-neon-green" />
                         </div>
-                        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-neon-green uppercase">Finalizar Misión</span>
+                        <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-neon-green uppercase">{t('dashboard.completion.title')}</span>
                     </div>
                     <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
                         <X className="w-6 h-6" />
@@ -38,20 +40,20 @@ export default function CompletionModal({ isOpen, onClose, onConfirm, taskTitle 
                     <div className="space-y-3">
                         <label className="flex items-center gap-2 text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest">
                             <MessageSquare className="w-3.5 h-3.5 text-neon-green" />
-                            ¿Qué hemos aprendido hoy? (Opcional)
+                            {t('dashboard.completion.learnedQuestion')}
                         </label>
                         <textarea
                             autoFocus
                             value={note}
                             onChange={(e) => setNote(e.target.value)}
-                            placeholder="Ej: Hoy vimos el patrón MVC en Java, muy útil para la arquitectura del backend..."
+                            placeholder={t('dashboard.completion.placeholder')}
                             className="w-full bg-[#161b22] border border-[#30363d] focus:border-neon-green/50 p-4 rounded-xl text-sm text-gray-200 font-sans outline-none transition-all resize-none h-32"
                         />
                     </div>
 
                     <div className="flex items-center gap-2 text-[9px] font-mono text-neon-green/50 animate-pulse">
                         <Terminal className="w-3 h-3" />
-                        <span>PREPARANDO_LOG_PARA_EL_HISTORIAL...</span>
+                        <span>{t('dashboard.completion.preparing')}</span>
                     </div>
                 </div>
 
@@ -61,13 +63,13 @@ export default function CompletionModal({ isOpen, onClose, onConfirm, taskTitle 
                         onClick={onClose}
                         className="flex-1 px-6 py-3 rounded-xl border border-[#30363d] text-gray-400 font-mono font-bold text-[10px] uppercase tracking-widest hover:bg-[#21262d] transition-all"
                     >
-                        Cancelar
+                        {t('dashboard.completion.cancel')}
                     </button>
                     <button
                         onClick={handleSubmit}
                         className="flex-[2] bg-neon-green text-black px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-neon-green/20"
                     >
-                        Completar Tarea
+                        {t('dashboard.completion.complete')}
                     </button>
                 </div>
             </div>

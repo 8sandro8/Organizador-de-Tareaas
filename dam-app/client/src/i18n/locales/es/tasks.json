@@ -1,0 +1,94 @@
+{
+  "tasks": {
+    "add": {
+      "title": "Añadir Nueva Tarea",
+      "subject": "Asignatura",
+      "type": "Tipo de Tarea",
+      "externalLink": "Enlace Externo",
+      "executionDate": "Fecha de Ejecución",
+      "totalDuration": "Duración Total",
+      "resumePoint": "Punto de Reanudación",
+      "notes": "Notas y Detalles",
+      "titlePlaceholder": "Ej: Ejercicio 1 - Bucles...",
+      "linkPlaceholder": "https://drive.google.com/...",
+      "durationPlaceholder": "Ej: 1h 20m o 45:00...",
+      "resumePlaceholder": "Ej: 15:30 o Minuto 20...",
+      "notesPlaceholder": "Anotaciones extra, dudas o pasos a seguir...",
+      "saveButton": "Confirmar y Guardar Tarea",
+      "savingButton": "Estableciendo Conexión...",
+      "errors": {
+        "titleRequired": "El título es obligatorio",
+        "titleMinLength": "El título debe tener al menos 3 caracteres",
+        "titleMaxLength": "El título no puede exceder 100 caracteres",
+        "selectSubject": "Selecciona una asignatura",
+        "invalidUrl": "El enlace debe ser una URL válida (https://...)",
+        "connectionError": "Error de conexión con el Kernel"
+      }
+    },
+    "details": {
+      "title": "Detalles de la Tarea",
+      "registrationDate": "Fecha de Registro",
+      "completionDate": "Fecha de Finalización",
+      "subject": "Asignatura",
+      "totalDuration": "Duración Total",
+      "resumePoint": "Punto de Reanudación",
+      "notes": "Notas y Observaciones",
+      "completionNote": "Nota de Finalización",
+      "noLink": "// SIN ENLACE REGISTRADO",
+      "noNotes": "// Sin notas adicionales.",
+      "noCompletionNote": "// No se registró nota de finalización.",
+      "noDuration": "// N/A",
+      "resumeDefault": "// SI_INICIAR",
+      "editTask": "Editar Tarea",
+      "saveChanges": "Guardar Cambios",
+      "cancel": "Cancelar",
+      "deleteTask": "Eliminar Tarea",
+      "openLink": "Abrir"
+    },
+    "list": {
+      "title": "Registro de Tareas",
+      "subtitle": "v5.0 BULK_DELETION",
+      "selectSubject": "Selecciona una asignatura",
+      "noTasks": "Cero Tareas Pendientes",
+      "noTasksCategory": "Cero Tareas en Categoría",
+      "elements": "ELEMENTOS",
+      "searchPlaceholder": "BUSCAR TAREA O ASIGNATURA...",
+      "backToSubjects": "VOLVER A ASIGNATURAS",
+      "active": "Active",
+      "completed": "Terminado:",
+      "created": "Creado:",
+      "resume": "RE:",
+      "urgent": "Urgente",
+      "launch": "Lanzar",
+      "selectAll": "SELECCIONAR TODO",
+      "deselectAll": "DESELECCIONAR TODO",
+      "deleteSelected": "BORRAR",
+      "total": "Logs_Output",
+      "selected": "SELECCIONADAS",
+      "systemReady": "System_Ready"
+    },
+    "types": {
+      "all": "TODAS",
+      "clase": "CLASES",
+      "ejercicio": "EJERCICIOS",
+      "examen": "EXÁMENES",
+      "pildoras": "PÍLDORAS",
+      "apuntes": "APUNTES",
+      "completed": "COMPLETADOS",
+      "criticalThreat": "CRITICAL_THREAT"
+    },
+    "confirmDelete": {
+      "title": "Confirmar eliminación",
+      "singleMessage": "¿Estás seguro de que quieres eliminar esta tarea?",
+      "multiMessage": "¿Eliminar tareas?",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "empty": "No hay tareas",
+    "priority": {
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    }
+  }
+}

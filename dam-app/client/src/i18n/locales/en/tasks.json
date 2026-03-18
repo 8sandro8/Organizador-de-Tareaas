@@ -1,0 +1,94 @@
+{
+  "tasks": {
+    "add": {
+      "title": "Add New Task",
+      "subject": "Subject",
+      "type": "Task Type",
+      "externalLink": "External Link",
+      "executionDate": "Execution Date",
+      "totalDuration": "Total Duration",
+      "resumePoint": "Resume Point",
+      "notes": "Notes and Details",
+      "titlePlaceholder": "Ex: Exercise 1 - Loops...",
+      "linkPlaceholder": "https://drive.google.com/...",
+      "durationPlaceholder": "Ex: 1h 20m or 45:00...",
+      "resumePlaceholder": "Ex: 15:30 or Minute 20...",
+      "notesPlaceholder": "Extra annotations, questions or steps to follow...",
+      "saveButton": "Confirm and Save Task",
+      "savingButton": "Establishing Connection...",
+      "errors": {
+        "titleRequired": "Title is required",
+        "titleMinLength": "Title must be at least 3 characters",
+        "titleMaxLength": "Title cannot exceed 100 characters",
+        "selectSubject": "Select a subject",
+        "invalidUrl": "Link must be a valid URL (https://...)",
+        "connectionError": "Connection error with the Kernel"
+      }
+    },
+    "details": {
+      "title": "Task Details",
+      "registrationDate": "Registration Date",
+      "completionDate": "Completion Date",
+      "subject": "Subject",
+      "totalDuration": "Total Duration",
+      "resumePoint": "Resume Point",
+      "notes": "Notes and Observations",
+      "completionNote": "Completion Note",
+      "noLink": "// NO LINK REGISTERED",
+      "noNotes": "// No additional notes.",
+      "noCompletionNote": "// No completion note recorded.",
+      "noDuration": "// N/A",
+      "resumeDefault": "// START_OVER",
+      "editTask": "Edit Task",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "deleteTask": "Delete Task",
+      "openLink": "Open"
+    },
+    "list": {
+      "title": "Task Registry",
+      "subtitle": "v5.0 BULK_DELETION",
+      "selectSubject": "Select a subject",
+      "noTasks": "Zero Pending Tasks",
+      "noTasksCategory": "Zero Tasks in Category",
+      "elements": "ELEMENTS",
+      "searchPlaceholder": "SEARCH TASK OR SUBJECT...",
+      "backToSubjects": "BACK TO SUBJECTS",
+      "active": "Active",
+      "completed": "Completed:",
+      "created": "Created:",
+      "resume": "RE:",
+      "urgent": "Urgent",
+      "launch": "Launch",
+      "selectAll": "SELECT ALL",
+      "deselectAll": "DESELECT ALL",
+      "deleteSelected": "DELETE",
+      "total": "Logs_Output",
+      "selected": "SELECTED",
+      "systemReady": "System_Ready"
+    },
+    "types": {
+      "all": "ALL",
+      "clase": "CLASSES",
+      "ejercicio": "EXERCISES",
+      "examen": "EXAMS",
+      "pildoras": "PILLS",
+      "apuntes": "NOTES",
+      "completed": "COMPLETED",
+      "criticalThreat": "CRITICAL_THREAT"
+    },
+    "confirmDelete": {
+      "title": "Confirm deletion",
+      "singleMessage": "Are you sure you want to delete this task?",
+      "multiMessage": "Delete tasks?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "empty": "No tasks",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  }
+}

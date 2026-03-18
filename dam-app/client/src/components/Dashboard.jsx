@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RefreshCcw, LayoutGrid, List, Cpu } from 'lucide-react'
 
 // Componentes
@@ -30,18 +31,20 @@ import useTaskOperations from '../hooks/useTaskOperations'
  * - Custom Hooks que gestionan la lógica de negocio
  * - Componentes visuales que renderizan la UI
  * 
- * NO contiene lógica de negocio directamente - délega todo a los hooks
+ * NO contiene lógica de negocio directamente - déllega todo a los hooks
  */
 function Dashboard({ currentUser, onLogout }) {
   // =============================================================================
   // GUARDIA DE SEGURIDAD: Verificación inmediata de usuario
   // =============================================================================
+  const { t } = useTranslation(['dashboard', 'common'])
+  
   if (!currentUser || !currentUser.id) {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Cpu className="w-10 h-10 text-neon-blue animate-pulse" />
-          <span className="text-gray-400">Cargando perfil...</span>
+          <span className="text-gray-400">{t('dashboard.loading')}</span>
         </div>
       </div>
     )
@@ -92,13 +95,6 @@ function Dashboard({ currentUser, onLogout }) {
     document.body.className = `theme-${theme}`
   }, [theme])
   
-  // NOTA: Efecto de sonido al cargar eliminado - causaba errores de renderizado
-  // useEffect(() => {
-  //   if (!loading) {
-  //     playSound('kernel')
-  //   }
-  // }, [loading, playSound])
-
   // =============================================================================
   // MANEJADORES DE EVENTOS
   // =============================================================================
@@ -115,7 +111,7 @@ function Dashboard({ currentUser, onLogout }) {
 
     if (isCompleting) {
       setPulseEffect(true)
-      addLog('Tarea_Completada_¡+50XP!', 'success')
+      addLog(t('dashboard.xp.taskCompleted'), 'success')
       setTimeout(() => setPulseEffect(false), 1000)
     }
   }
@@ -128,7 +124,7 @@ function Dashboard({ currentUser, onLogout }) {
   const handleQuickAdd = (subjectId) => {
     setPreselectedSubject(subjectId)
     setIsAddModalOpen(true)
-    addLog(`Preparando_Registro_Rápido`, 'info')
+    addLog(t('dashboard.quickAdd'), 'info')
   }
 
   // =============================================================================
@@ -164,7 +160,7 @@ function Dashboard({ currentUser, onLogout }) {
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Cpu className="w-10 h-10 text-neon-blue animate-pulse" />
-          <span className="text-gray-400">Cargando...</span>
+          <span className="text-gray-400">{t('app.loading', { defaultValue: 'Cargando...' })}</span>
         </div>
       </div>
     )
@@ -209,7 +205,7 @@ function Dashboard({ currentUser, onLogout }) {
               <Timer
                 onFinish={() => {
                   addXP(100)
-                  addLog('Sesión_Terminada_¡+100XP!', 'success')
+                  addLog(t('dashboard.xp.sessionFinished'), 'success')
                 }}
                 isFocusMode={isFocusMode}
                 onToggleFocus={() => setIsFocusMode(!isFocusMode)}
@@ -245,7 +241,7 @@ function Dashboard({ currentUser, onLogout }) {
               <div className="flex items-center gap-3 border-b border-[#30363d] pb-4">
                 <List className="w-5 h-5 text-neon-purple" />
                 <h2 className="text-xl font-semibold text-white">
-                  Tareas
+                  {t('dashboard.tasks')}
                 </h2>
               </div>
 
@@ -275,7 +271,7 @@ function Dashboard({ currentUser, onLogout }) {
               <div className="flex items-center justify-between border-b border-[#30363d] pb-4 bg-[#0d1117] sticky top-0 z-10">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-3">
                   <LayoutGrid className="w-6 h-6 text-neon-blue" />
-                  Asignaturas
+                  {t('dashboard.subjects')}
                 </h2>
                 <button
                   onClick={() => fetchData(true)}
@@ -284,7 +280,7 @@ function Dashboard({ currentUser, onLogout }) {
                   }`}
                 >
                   <RefreshCcw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />
-                  {refreshing ? 'RECARGANDO...' : 'RECARGAR'}
+                  {refreshing ? t('dashboard.refreshing') : t('dashboard.refresh')}
                 </button>
               </div>
 
@@ -293,16 +289,16 @@ function Dashboard({ currentUser, onLogout }) {
                 {apiError && (
                   <div className="col-span-full border border-red-500/30 bg-red-500/10 p-4 rounded-xl text-center">
                     <p className="text-red-500 text-sm font-medium mb-2">
-                      Error de conexión
+                      {t('dashboard.error.title')}
                     </p>
                     <p className="text-gray-400 text-xs mb-4">
-                      No se puede conectar con el servidor. Verifica tu conexión.
+                      {t('dashboard.error.message')}
                     </p>
                     <button
                       onClick={() => fetchData(true)}
                       className="px-4 py-2 bg-red-500 text-white rounded-lg text-xs hover:bg-red-600 transition-colors"
                     >
-                      Reintentar
+                      {t('dashboard.error.retry')}
                     </button>
                   </div>
                 )}
@@ -321,10 +317,10 @@ function Dashboard({ currentUser, onLogout }) {
                 ) : !apiError && (
                   <div className="col-span-full py-20 border border-dashed border-[#30363d] rounded-3xl flex flex-col items-center justify-center text-gray-600 font-mono">
                     <span className="text-sm uppercase tracking-widest animate-pulse">
-                      Advertencia: No se detectaron módulos cargados
+                      {t('dashboard.noModules.title')}
                     </span>
                     <span className="text-[10px] mt-2 opacity-50">
-                      Verifica la conexión con el Kernel o ejecuta el seed
+                      {t('dashboard.noModules.subtitle')}
                     </span>
                   </div>
                 )}

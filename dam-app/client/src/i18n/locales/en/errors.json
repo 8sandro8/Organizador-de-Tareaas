@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Connection error",
+    "notFound": "Not found"
+  }
+}

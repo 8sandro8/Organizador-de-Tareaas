@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Plus, Link, AlignLeft, Calendar, Terminal, Shield } from 'lucide-react';
 
 export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialSubjectId }) {
+    const { t } = useTranslation(['tasks', 'common']);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [subjectId, setSubjectId] = useState(initialSubjectId || '');
@@ -19,25 +21,29 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
         }
     }, [isOpen, initialSubjectId]);
 
+    const getErrorMessage = useCallback((errorKey) => {
+        return t(`tasks.add.errors.${errorKey}`) || errorKey;
+    }, [t]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         // Validaciones
         const trimmedTitle = title.trim();
         if (!trimmedTitle) {
-            setError('El título es obligatorio');
+            setError(getErrorMessage('titleRequired'));
             return;
         }
         if (trimmedTitle.length < 3) {
-            setError('El título debe tener al menos 3 caracteres');
+            setError(getErrorMessage('titleMinLength'));
             return;
         }
         if (trimmedTitle.length > 100) {
-            setError('El título no puede exceder 100 caracteres');
+            setError(getErrorMessage('titleMaxLength'));
             return;
         }
         if (!subjectId) {
-            setError('Selecciona una asignatura');
+            setError(getErrorMessage('selectSubject'));
             return;
         }
         
@@ -46,7 +52,7 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
             try {
                 new URL(link);
             } catch {
-                setError('El enlace debe ser una URL válida (https://...)');
+                setError(getErrorMessage('invalidUrl'));
                 return;
             }
         }
@@ -68,7 +74,7 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
                 resumePoint: resumePoint.trim() 
             });
         } catch (err) {
-            setError('Error de conexión con el Kernel');
+            setError(getErrorMessage('connectionError'));
             setIsSaving(false);
             return;
         }
@@ -99,7 +105,7 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
                             <Plus className="w-4 h-4 text-neon-blue" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-neon-blue uppercase">Añadir Nueva Tarea</span>
+                            <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-neon-blue uppercase">{t('tasks.add.title')}</span>
                         </div>
                     </div>
                     <button type="button" onClick={onClose} className="text-gray-500 hover:text-white transition-colors p-1">
@@ -109,34 +115,34 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
 
                 <div className="p-8 space-y-6">
                     <div className="group">
-                        <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold group-focus-within:text-neon-blue transition-colors">Título de la Tarea</label>
+                        <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold group-focus-within:text-neon-blue transition-colors">{t('tasks.add.title')}</label>
                         <input
                             autoFocus
                             required
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-4 text-white text-sm focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700"
-                            placeholder="Ej: Ejercicio 1 - Bucles..."
+                            placeholder={t('tasks.add.titlePlaceholder')}
                         />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold">Asignatura</label>
+                            <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold">{t('tasks.add.subject')}</label>
                             <select
                                 required
                                 value={subjectId}
                                 onChange={(e) => setSubjectId(e.target.value)}
                                 className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-4 text-white text-sm focus:border-neon-blue/50 outline-none appearance-none cursor-pointer"
                             >
-                                <option value="">Seleccionar Módulo...</option>
+                                <option value="">{t('tasks.add.errors.selectSubject')}</option>
                                 {subjects.map(s => (
                                     <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
                                 ))}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold">Tipo de Tarea</label>
+                            <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold">{t('tasks.add.type')}</label>
                             <select
                                 value={type}
                                 onChange={(e) => setType(e.target.value)}
@@ -154,18 +160,18 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold flex items-center gap-2">
-                                <Link className="w-3.5 h-3.5 text-neon-blue" /> Enlace Externo
+                                <Link className="w-3.5 h-3.5 text-neon-blue" /> {t('tasks.add.externalLink')}
                             </label>
                             <input
                                 value={link}
                                 onChange={(e) => setLink(e.target.value)}
                                 className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-4 text-white text-sm focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700 font-mono"
-                                placeholder="https://drive.google.com/..."
+                                placeholder={t('tasks.add.linkPlaceholder')}
                             />
                         </div>
                         <div>
                             <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold flex items-center gap-2">
-                                <Calendar className="w-3.5 h-3.5 text-neon-blue" /> Fecha de Ejecución
+                                <Calendar className="w-3.5 h-3.5 text-neon-blue" /> {t('tasks.add.executionDate')}
                             </label>
                             <input
                                 type="date"
@@ -179,38 +185,38 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold flex items-center gap-2">
-                                <Shield className="w-3.5 h-3.5 text-neon-blue" /> Duración Total
+                                <Shield className="w-3.5 h-3.5 text-neon-blue" /> {t('tasks.add.totalDuration')}
                             </label>
                             <input
                                 value={duration}
                                 onChange={(e) => setDuration(e.target.value)}
                                 className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-4 text-white text-sm focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700"
-                                placeholder="Ej: 1h 20m o 45:00..."
+                                placeholder={t('tasks.add.durationPlaceholder')}
                             />
                         </div>
                         <div>
                             <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold flex items-center gap-2">
-                                <Plus className="w-3.5 h-3.5 text-neon-blue" /> Punto de Reanudación
+                                <Plus className="w-3.5 h-3.5 text-neon-blue" /> {t('tasks.add.resumePoint')}
                             </label>
                             <input
                                 value={resumePoint}
                                 onChange={(e) => setResumePoint(e.target.value)}
                                 className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-4 text-white text-sm focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700"
-                                placeholder="Ej: 15:30 o Minuto 20..."
+                                placeholder={t('tasks.add.resumePlaceholder')}
                             />
                         </div>
                     </div>
 
                     <div>
                         <label className="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-mono font-bold flex items-center gap-2">
-                            <AlignLeft className="w-3.5 h-3.5 text-neon-blue" /> Notas y Detalles
+                            <AlignLeft className="w-3.5 h-3.5 text-neon-blue" /> {t('tasks.add.notes')}
                         </label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows={3}
                             className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-4 text-white text-sm focus:border-neon-blue/50 outline-none resize-none transition-all placeholder:text-gray-700"
-                            placeholder="Anotaciones extra, dudas o pasos a seguir..."
+                            placeholder={t('tasks.add.notesPlaceholder')}
                         />
                     </div>
 
@@ -234,7 +240,7 @@ export default function AddTask({ subjects, onAddTask, isOpen, onClose, initialS
                         ) : (
                             <Shield className="w-5 h-5 group-hover:animate-pulse" />
                         )}
-                        {isSaving ? 'Estableciendo Conexión...' : 'Confirmar y Guardar Tarea'}
+                        {isSaving ? t('tasks.add.savingButton') : t('tasks.add.saveButton')}
                     </button>
                 </div>
             </form>

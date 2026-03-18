@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, CheckCircle2, Circle, Pencil } from 'lucide-react';
 
 export default function QuickNotes() {
+    const { t } = useTranslation(['common', 'dashboard']);
     const [notes, setNotes] = useState(() => {
         const saved = localStorage.getItem('dam_quick_notes');
         return saved ? JSON.parse(saved) : [
@@ -15,7 +17,7 @@ export default function QuickNotes() {
         localStorage.setItem('dam_quick_notes', JSON.stringify(notes));
     }, [notes]);
 
-    const addNote = (e) => {
+    const addNote = useCallback((e) => {
         e.preventDefault();
         if (!inputValue.trim()) return;
         const newNote = {
@@ -25,21 +27,21 @@ export default function QuickNotes() {
         };
         setNotes([newNote, ...notes]);
         setInputValue('');
-    };
+    }, [inputValue, notes]);
 
-    const toggleNote = (id) => {
+    const toggleNote = useCallback((id) => {
         setNotes(notes.map(note =>
             note.id === id ? { ...note, completed: !note.completed } : note
         ));
-    };
+    }, [notes]);
 
-    const deleteNote = (id) => {
+    const deleteNote = useCallback((id) => {
         setNotes(notes.filter(note => note.id !== id));
-    };
+    }, [notes]);
 
-    const clearCompleted = () => {
+    const clearCompleted = useCallback(() => {
         setNotes(notes.filter(note => !note.completed));
-    };
+    }, [notes]);
 
     return (
         <div className="bg-[#161b22] border border-[#30363d] rounded-2xl flex flex-col shadow-2xl overflow-hidden h-fit max-h-[400px]">
@@ -53,7 +55,7 @@ export default function QuickNotes() {
                         onClick={clearCompleted}
                         className="text-[8px] font-mono text-gray-500 hover:text-red-400 uppercase tracking-tighter transition-colors"
                     >
-                        Limpiar completadas
+                        {t('common.delete', { defaultValue: 'Limpiar completadas' })}
                     </button>
                 )}
             </div>
@@ -64,7 +66,7 @@ export default function QuickNotes() {
                         type="text"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="Añadir nota rápida..."
+                        placeholder={t('tasks.add.notesPlaceholder', { defaultValue: 'Añadir nota rápida...' })}
                         className="w-full bg-[#161b22] border border-[#30363d] rounded-xl py-2 px-4 pr-10 text-xs text-gray-300 font-sans focus:border-neon-green/50 outline-none transition-all placeholder:text-gray-600"
                     />
                     <button
@@ -79,7 +81,7 @@ export default function QuickNotes() {
             <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
                 {notes.length === 0 ? (
                     <div className="py-8 text-center text-gray-600 italic font-mono text-[10px] uppercase tracking-widest">
-                        Sin notas pendientes
+                        {t('tasks.empty', { defaultValue: 'Sin notas pendientes' })}
                     </div>
                 ) : (
                     notes.map(note => (

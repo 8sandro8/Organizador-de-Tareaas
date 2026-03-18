@@ -1,21 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { X, Plus, Trash2, Edit2, Check, Save } from 'lucide-react';
 
 export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
+    const { t } = useTranslation(['dashboard', 'common']);
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({ name: '', code: '', icon: '' });
     const [newForm, setNewForm] = useState({ name: '', code: '', icon: '📚' });
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchSubjects();
-        }
-    }, [isOpen]);
-
-    const fetchSubjects = async () => {
+    const fetchSubjects = useCallback(async () => {
         try {
             const res = await api.get('/subjects');
             setSubjects(res.data);
@@ -24,9 +20,15 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const handleAddSubject = async (e) => {
+    useEffect(() => {
+        if (isOpen) {
+            fetchSubjects();
+        }
+    }, [isOpen, fetchSubjects]);
+
+    const handleAddSubject = useCallback(async (e) => {
         e.preventDefault();
         try {
             await api.post('/subjects', newForm);
@@ -35,9 +37,9 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
         } catch (err) {
             console.error("Error adding subject:", err);
         }
-    };
+    }, [newForm, fetchSubjects]);
 
-    const handleUpdateSubject = async (id) => {
+    const handleUpdateSubject = useCallback(async (id) => {
         try {
             await api.put(`/subjects/${id}`, editForm);
             setEditingId(null);
@@ -45,21 +47,21 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
         } catch (err) {
             console.error("Error updating subject:", err);
         }
-    };
+    }, [editForm, fetchSubjects]);
 
-    const handleDeleteSubject = async (id) => {
+    const handleDeleteSubject = useCallback(async (id) => {
         try {
             await api.delete(`/subjects/${id}`);
             fetchSubjects();
         } catch (err) {
             console.error("Error deleting subject:", err);
         }
-    };
+    }, [fetchSubjects]);
 
-    const startEditing = (subj) => {
+    const startEditing = useCallback((subj) => {
         setEditingId(subj.id);
         setEditForm({ name: subj.name, code: subj.code, icon: subj.icon || '📚' });
-    };
+    }, []);
 
     if (!isOpen) return null;
 
@@ -69,7 +71,7 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
                 <div className="p-6 border-b border-[#30363d] flex items-center justify-between bg-[#161b22]/50">
                     <h2 className="text-xl font-mono font-bold text-white flex items-center gap-3">
                         <Edit2 className="w-5 h-5 text-neon-blue" />
-                        GESTOR DE MÓDULOS
+                        {t('dashboard.subjectManager')}
                     </h2>
                     <button onClick={onClose} className="p-2 hover:bg-[#30363d] rounded-xl transition-colors text-gray-400">
                         <X className="w-6 h-6" />
@@ -79,11 +81,11 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
                     {/* Add New Subject */}
                     <div className="bg-black/40 border border-[#30363d] p-4 rounded-2xl">
-                        <h3 className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-4">Añadir Nuevo Módulo</h3>
+                        <h3 className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-4">{t('tasks.add.title')}</h3>
                         <form onSubmit={handleAddSubject} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                             <input
                                 type="text"
-                                placeholder="Nombre (ej: Programación)"
+                                placeholder={t('tasks.add.subject')}
                                 className="sm:col-span-5 bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-2 text-sm focus:border-neon-blue outline-none transition-colors"
                                 value={newForm.name}
                                 onChange={e => setNewForm({ ...newForm, name: e.target.value })}
@@ -91,7 +93,7 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
                             />
                             <input
                                 type="text"
-                                placeholder="Código (ej: 08)"
+                                placeholder={t('tasks.details.subject') + " Code"}
                                 className="sm:col-span-3 bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-2 text-sm focus:border-neon-blue outline-none transition-colors upper"
                                 value={newForm.code}
                                 onChange={e => setNewForm({ ...newForm, code: e.target.value.toUpperCase() })}
@@ -99,7 +101,7 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
                             />
                             <input
                                 type="text"
-                                placeholder="Icono"
+                                placeholder="Icon"
                                 className="sm:col-span-2 bg-[#0d1117] border border-[#30363d] rounded-xl px-4 py-2 text-sm text-center focus:border-neon-blue outline-none transition-colors"
                                 value={newForm.icon}
                                 onChange={e => setNewForm({ ...newForm, icon: e.target.value })}
@@ -111,18 +113,18 @@ export default function SubjectManagerModal({ isOpen, onClose, onUpdate }) {
                                 <Plus className="w-5 h-5" />
                             </button>
                             <div className="sm:col-span-12 text-[10px] text-gray-500 font-mono mt-2 pl-2 border-l-2 border-[#30363d]">
-                                <span className="text-neon-blue">💡 Tip Iconos:</span> Usa Emojis del teclado en <kbd className="bg-[#161b22] px-1.5 py-0.5 rounded border border-[#30363d]">Win + .</kbd> (Windows) o <kbd className="bg-[#161b22] px-1.5 py-0.5 rounded border border-[#30363d]">Cmd + Ctrl + Espacio</kbd> (Mac)
+                                <span className="text-neon-blue">💡 Tip:</span> Usa Emojis del teclado en <kbd className="bg-[#161b22] px-1.5 py-0.5 rounded border border-[#30363d]">Win + .</kbd> (Windows) o <kbd className="bg-[#161b22] px-1.5 py-0.5 rounded border border-[#30363d]">Cmd + Ctrl + Espacio</kbd> (Mac)
                             </div>
                         </form>
                     </div>
 
                     {/* Subject List */}
                     <div className="space-y-3">
-                        <h3 className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">Módulos Existentes</h3>
+                        <h3 className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">{t('dashboard.subjects')}</h3>
                         {loading ? (
                             <div className="py-10 flex justify-center"><div className="w-6 h-6 border-2 border-neon-blue border-t-transparent rounded-full animate-spin"></div></div>
                         ) : subjects.length === 0 ? (
-                            <div className="text-center py-10 border border-dashed border-[#30363d] rounded-2xl text-gray-600 text-xs font-mono italic">No hay módulos registrados</div>
+                            <div className="text-center py-10 border border-dashed border-[#30363d] rounded-2xl text-gray-600 text-xs font-mono italic">{t('tasks.empty')}</div>
                         ) : (
                             subjects.map(subj => (
                                 <div key={subj.id} className="flex items-center gap-3 bg-[#161b22] border border-[#30363d] p-3 rounded-2xl group transition-all hover:border-gray-600">

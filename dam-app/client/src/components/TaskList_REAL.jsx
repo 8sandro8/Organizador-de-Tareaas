@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Terminal, ShieldCheck, Check, Trash2, ExternalLink, Filter, Search, ChevronRight, RefreshCcw, Square, CheckSquare, Trash, FileText, Clipboard, Activity, ArrowLeft, BookOpen } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
 export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTasks, filter, setFilter, searchTerm: externalSearchTerm, setSearchTerm: setExternalSearchTerm, onOpenDetails, theme = 'cyberpunk', selectedSubjectForFilter, setSelectedSubjectForFilter, subjects = [] }) {
+    const { t } = useTranslation(['tasks', 'common', 'dashboard']);
     const [selectedIds, setSelectedIds] = useState([]);
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, type: null, id: null, ids: null });
     const [localSearch, setLocalSearch] = useState('');
@@ -16,8 +18,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
             }
         }, 300);
         return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [localSearch]);
+    }, [localSearch, setExternalSearchTerm]);
 
     // Sincronizar con searchTerm externo al inicio
     useEffect(() => {
@@ -26,25 +27,25 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
         }
     }, []);
 
-    const filterOptions = isSanidad ? [
-        { id: 'ALL', label: 'Todas', color: 'bg-slate-600' },
+    const filterOptions = useMemo(() => isSanidad ? [
+        { id: 'ALL', label: t('tasks.types.all', { defaultValue: 'Todas' }), color: 'bg-slate-600' },
         { id: 'CLASE', label: 'Clases', color: 'bg-[#007FFF]' },
         { id: 'EJERCICIO', label: 'Ejercicios', color: 'bg-purple-500' },
         { id: 'EXAMEN', label: 'Exámenes', color: 'bg-red-500' },
         { id: 'PILDORAS', label: 'Píldoras', color: 'bg-amber-500' },
         { id: 'APUNTES', label: 'Apuntes', color: 'bg-green-500' },
-        { id: 'COMPLETADOS', label: 'Completados', color: 'bg-green-500 text-white font-semibold' },
+        { id: 'COMPLETADOS', label: t('tasks.types.completed', { defaultValue: 'Completados' }), color: 'bg-green-500 text-white font-semibold' },
     ] : [
-        { id: 'ALL', label: 'TODAS', color: 'bg-gray-700' },
+        { id: 'ALL', label: t('tasks.types.all', { defaultValue: 'TODAS' }), color: 'bg-gray-700' },
         { id: 'CLASE', label: 'CLASES', color: 'bg-neon-blue' },
         { id: 'EJERCICIO', label: 'EJERCICIOS', color: 'bg-neon-purple' },
         { id: 'EXAMEN', label: 'EXÁMENES', color: 'bg-red-500' },
         { id: 'PILDORAS', label: 'PÍLDORAS', color: 'bg-yellow-500' },
         { id: 'APUNTES', label: 'APUNTES', color: 'bg-neon-green/80' },
         { id: 'COMPLETADOS', label: 'COMPLETADOS', color: 'bg-neon-green text-black font-black' },
-    ];
+    ], [isSanidad, t]);
 
-    const styles = {
+    const styles = useMemo(() => ({
         container: isSanidad
             ? 'bg-white border border-slate-200 rounded-[1.25rem] h-[70vh] flex flex-col shadow-xl overflow-hidden'
             : 'bg-[#161b22] border border-[#30363d] rounded-2xl h-[70vh] flex flex-col shadow-2xl overflow-hidden relative',
@@ -110,14 +111,13 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
         footer: isSanidad
             ? 'p-4 border-t border-slate-100 bg-slate-50/80 backdrop-blur-md'
             : 'p-3 border-t border-[#30363d] bg-[#0d1117]/80 backdrop-blur-md',
-    };
+    }), [isSanidad]);
 
     useEffect(() => {
         setSelectedIds([]);
     }, [filter]);
 
     // Obtener asignaturas que tienen contenido en el filtro actual
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const subjectsWithContent = useMemo(() => {
         if (!tasks || tasks.length === 0) return [];
         if (!subjects || subjects.length === 0) return [];
@@ -130,15 +130,12 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
             const subjectIdStr = String(task.subject.id);
             
             if (filter === 'ALL') {
-                // ALL: mostrar todas las asignaturas que tengan ALGUNA tarea
                 subjectIdsWithContent.add(subjectIdStr);
             } else if (filter === 'COMPLETADOS') {
-                // COMPLETADOS: solo asignaturas con tareas completadas
                 if (task.isCompleted) {
                     subjectIdsWithContent.add(subjectIdStr);
                 }
             } else {
-                // Filtro específico (CLASE, EJERCICIO, etc.)
                 if (!task.isCompleted && task.type === filter) {
                     subjectIdsWithContent.add(subjectIdStr);
                 }
@@ -151,53 +148,53 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
     // Determinar si mostrar la vista de asignaturas
     const showSubjectsView = !selectedSubjectForFilter && subjectsWithContent.length > 0;
 
-    const handleSubjectSelect = (subjectId) => {
+    const handleSubjectSelect = useCallback((subjectId) => {
         if (setSelectedSubjectForFilter) {
             setSelectedSubjectForFilter(subjectId);
         }
-    };
+    }, [setSelectedSubjectForFilter]);
 
-    const handleBackToSubjects = () => {
+    const handleBackToSubjects = useCallback(() => {
         if (setSelectedSubjectForFilter) {
             setSelectedSubjectForFilter(null);
         }
-    };
+    }, [setSelectedSubjectForFilter]);
 
-    const handleFilterChange = (newFilter) => {
+    const handleFilterChange = useCallback((newFilter) => {
         setFilter(newFilter);
         if (setSelectedSubjectForFilter) {
             setSelectedSubjectForFilter(null);
         }
-    };
+    }, [setFilter, setSelectedSubjectForFilter]);
 
-    const handleSelectAll = () => {
+    const handleSelectAll = useCallback(() => {
         if (selectedIds.length === tasks.length) {
             setSelectedIds([]);
         } else {
             setSelectedIds(tasks.map(t => t.id));
         }
-    };
+    }, [selectedIds.length, tasks]);
 
-    const handleToggleSelect = (e, id) => {
+    const handleToggleSelect = useCallback((e, id) => {
         e.stopPropagation();
         setSelectedIds(prev =>
             prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
         );
-    };
+    }, []);
 
-    const handleDeleteSelected = () => {
+    const handleDeleteSelected = useCallback(() => {
         if (selectedIds.length > 0) {
             setDeleteConfirm({ 
                 show: true, 
                 type: 'multi', 
                 id: null, 
                 ids: selectedIds,
-                message: `¿Eliminar ${selectedIds.length} tarea${selectedIds.length > 1 ? 's' : ''}?`
+                message: t('tasks.confirmDelete.multiMessage', { count: selectedIds.length })
             });
         }
-    };
+    }, [selectedIds.length, t]);
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = useCallback(() => {
         if (deleteConfirm.type === 'multi' && deleteConfirm.ids) {
             onDeleteTasks(deleteConfirm.ids);
             setSelectedIds([]);
@@ -205,13 +202,23 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
             onDeleteTask(deleteConfirm.id);
         }
         setDeleteConfirm({ show: false, type: null, id: null, ids: null, message: '' });
-    };
+    }, [deleteConfirm, onDeleteTasks, onDeleteTask]);
 
-    const handleCancelDelete = () => {
+    const handleCancelDelete = useCallback(() => {
         setDeleteConfirm({ show: false, type: null, id: null, ids: null, message: '' });
-    };
+    }, []);
 
-    const getTypeBadgeClass = (type) => {
+    const handleDeleteTask = useCallback((taskId, taskTitle) => {
+        setDeleteConfirm({ 
+            show: true, 
+            type: 'single', 
+            id: taskId, 
+            ids: null,
+            message: t('tasks.confirmDelete.singleMessage')
+        });
+    }, [t]);
+
+    const getTypeBadgeClass = useCallback((type) => {
         switch (type) {
             case 'EXAMEN': return styles.typeBadgeExam;
             case 'EJERCICIO': return isSanidad ? 'bg-purple-500' : 'bg-neon-purple';
@@ -219,16 +226,16 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
             case 'APUNTES': return isSanidad ? 'bg-green-500' : 'bg-neon-green/80';
             default: return isSanidad ? styles.typeBadgeClase : 'bg-neon-blue';
         }
-    };
+    }, [styles, isSanidad]);
 
-    const getTypeLabel = (type) => {
+    const getTypeLabel = useCallback((type) => {
         if (isSanidad) {
             return type;
         }
         return type === 'EXAMEN' ? 'CRITICAL_THREAT' : type;
-    };
+    }, [isSanidad]);
 
-    const renderTask = (task) => {
+    const renderTask = useCallback((task) => {
         const isUrgent = new Date(task.date) <= new Date(new Date().setHours(48));
         const isSelected = selectedIds.includes(task.id);
         const selectedClass = isSelected 
@@ -283,7 +290,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                                     task.type === 'PILDORAS' ? 'text-amber-500' :
                                     task.type === 'APUNTES' ? 'text-green-500' : (isSanidad ? 'text-[#007FFF]' : 'text-neon-blue')
                                 }`}>
-                                    {isSanidad ? 'Activa' : 'Active'}
+                                    {t('tasks.list.active')}
                                 </span>
                             </div>
                         )}
@@ -294,17 +301,17 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                         )}
                         {task.resumePoint && (
                             <span className={`${isSanidad ? 'text-xs bg-blue-50 border border-blue-100 text-[#007FFF] px-2 py-1 rounded-lg font-medium' : 'text-[8px] bg-neon-blue/10 border border-neon-blue/20 text-neon-blue px-1.5 py-0.5 rounded flex items-center gap-1 font-bold'}`}>
-                                <RefreshCcw className={isSanidad ? 'w-3.5 h-3.5' : 'w-2.5 h-2.5'} /> {isSanidad ? 'Continuar:' : 'RE:'} {task.resumePoint}
+                                <RefreshCcw className={isSanidad ? 'w-3.5 h-3.5' : 'w-2.5 h-2.5'} /> {t('tasks.list.resume')} {task.resumePoint}
                             </span>
                         )}
                         {isUrgent && !task.isCompleted && (
                             <span className={`text-[7px] ${isSanidad ? 'text-red-600 border border-red-200 bg-red-50 px-2 py-1 rounded-full font-semibold' : 'text-orange-500 border border-orange-500/20 px-1.5 py-0.5 rounded-md uppercase font-bold'}`}>
-                                {isSanidad ? 'Urgente' : 'Urgente'}
+                                {t('tasks.list.urgent')}
                             </span>
                         )}
                         <div className="flex flex-col items-end ml-auto text-[10px] leading-tight shrink-0 min-w-[60px]">
                             <span className={`uppercase ${isSanidad ? 'opacity-60 text-slate-400 font-medium' : 'opacity-60 text-gray-500 font-bold'}`}>
-                                {task.isCompleted ? (isSanidad ? 'Completado:' : 'Terminado:') : (isSanidad ? 'Creado:' : 'Creado:')}
+                                {task.isCompleted ? t('tasks.list.completed') : t('tasks.list.created')}
                             </span>
                             <span className={`font-bold ${task.isCompleted ? (isSanidad ? 'text-green-600' : 'text-neon-green/80') : (isSanidad ? 'text-slate-400' : 'text-gray-700')}`}>
                                 {task.isCompleted && task.completedAt
@@ -322,7 +329,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                         <div className={`mt-2 ${isSanidad ? 'bg-green-50 border-l-4 border-green-300 px-4 py-3 rounded-r-lg' : 'bg-neon-green/5 border-l-2 border-neon-green/30 px-3 py-2 rounded-r-lg'}`}>
                             <p className={`${isSanidad ? 'text-sm text-green-700 font-medium leading-relaxed' : 'text-[11px] text-neon-green/80 font-mono leading-relaxed italic'}`}>
                                 <span className={`font-bold ${isSanidad ? 'text-green-800' : 'uppercase tracking-tighter mr-1'}`}>
-                                    {isSanidad ? 'Nota:' : 'Nota:'}
+                                    {t('tasks.details.completionNote')}:
                                 </span>
                                 {task.completionNote}
                             </p>
@@ -339,20 +346,14 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                         className={styles.linkBtn}
                     >
                         <ExternalLink className={isSanidad ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
-                        <span>{isSanidad ? 'Abrir' : 'Lanzar'}</span>
+                        <span>{isSanidad ? t('tasks.details.openLink') : t('tasks.list.launch')}</span>
                     </a>
                 )}
 
                 <button
                     onClick={(e) => { 
                         e.stopPropagation(); 
-                        setDeleteConfirm({ 
-                            show: true, 
-                            type: 'single', 
-                            id: task.id, 
-                            ids: null,
-                            message: `¿Eliminar la tarea "${task.title}"?`
-                        }); 
+                        handleDeleteTask(task.id, task.title);
                     }}
                     className={`${isSanidad ? 'opacity-100 sm:opacity-0 group-hover:opacity-100 p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all self-center' : 'opacity-100 sm:opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all self-center relative z10 shrink-0'}`}
                 >
@@ -364,7 +365,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                 )}
             </div>
         );
-    };
+    }, [styles, getTypeBadgeClass, getTypeLabel, handleToggleSelect, isSanidad, onToggleTask, onOpenDetails, selectedIds, task, t, handleDeleteTask]);
 
     const renderContent = () => {
         if (showSubjectsView) {
@@ -373,7 +374,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                 <div className="space-y-3">
                     <div className={`text-center py-3 mb-4 ${isSanidad ? 'bg-blue-50 border border-blue-100 rounded-xl' : 'bg-[#161b22] border border-[#30363d] rounded-xl'}`}>
                         <p className={`text-xs font-semibold ${isSanidad ? 'text-[#007FFF]' : 'text-neon-blue'}`}>
-                            {isSanidad ? `Selecciona una asignatura (${filterLabel})` : `SELECCIONA ASIGNATURA (${filterLabel})`}
+                            {t('tasks.list.selectSubject')} ({filterLabel})
                         </p>
                     </div>
                     {subjectsWithContent.map(subject => (
@@ -401,7 +402,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                                         if (filter === 'ALL') return true;
                                         if (filter === 'COMPLETADOS') return t.isCompleted;
                                         return !t.isCompleted && t.type === filter;
-                                    }).length} {isSanidad ? 'elementos' : 'ELEMENTOS'}
+                                    }).length} {t('tasks.list.elements')}
                                 </p>
                             </div>
                             <ChevronRight className={`${isSanidad ? 'w-5 h-5 text-slate-300' : 'w-5 h-5 text-gray-600'}`} />
@@ -423,12 +424,12 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                         }`}
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        <span className="text-xs font-semibold">{isSanidad ? 'Volver a asignaturas' : 'VOLVER A ASIGNATURAS'}</span>
+                        <span className="text-xs font-semibold">{t('tasks.list.backToSubjects')}</span>
                     </button>
                     {tasks.length === 0 ? (
                         <div className={`text-center mt-16 py-10 border-2 border-dashed ${isSanidad ? 'border-slate-200 bg-slate-50' : 'border-[#30363d]' } rounded-3xl`}>
                             <ShieldCheck className={`w-12 h-12 mx-auto ${isSanidad ? 'text-green-400 opacity-40 mb-3' : 'opacity-10 mb-3'} ${isSanidad ? '' : 'text-neon-blue'}`} />
-                            <p className={`text-xs uppercase tracking-[0.2em] ${isSanidad ? 'text-slate-400' : ''}`}>{isSanidad ? 'No hay tareas en esta categoría' : 'Cero Tareas en Categoría'}</p>
+                            <p className={`text-xs uppercase tracking-[0.2em] ${isSanidad ? 'text-slate-400' : ''}`}>{t('tasks.list.noTasksCategory')}</p>
                         </div>
                     ) : (
                         tasks.map(task => renderTask(task))
@@ -441,7 +442,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
             return (
                 <div className={`text-center mt-16 py-10 border-2 border-dashed ${isSanidad ? 'border-slate-200 bg-slate-50' : 'border-[#30363d]' } rounded-3xl`}>
                     <ShieldCheck className={`w-12 h-12 mx-auto ${isSanidad ? 'text-green-400 opacity-40 mb-3' : 'opacity-10 mb-3'} ${isSanidad ? '' : 'text-neon-blue'}`} />
-                    <p className={`text-xs uppercase tracking-[0.2em] ${isSanidad ? 'text-slate-400' : ''}`}>{isSanidad ? 'No hay tareas pendientes' : 'Cero Tareas Pendientes'}</p>
+                    <p className={`text-xs uppercase tracking-[0.2em] ${isSanidad ? 'text-slate-400' : ''}`}>{t('tasks.list.noTasks')}</p>
                 </div>
             );
         }
@@ -458,8 +459,8 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                     </div>
                     <div>
                         <h2 className={styles.headerTitle}>
-                            {isSanidad ? 'Lista de Tareas' : 'Registro de Tareas'} 
-                            <span className={styles.headerSubtitle}> {isSanidad ? 'v5.0' : 'v4.2 BULK_DELETION'}</span>
+                            {t('tasks.list.title')} 
+                            <span className={styles.headerSubtitle}> {isSanidad ? 'v5.0' : t('tasks.list.subtitle')}</span>
                         </h2>
                     </div>
                 </div>
@@ -479,7 +480,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                         className={`flex items-center gap-2 ${isSanidad ? 'text-sm font-medium text-slate-500 hover:text-[#007FFF]' : 'text-[10px] font-mono font-bold text-gray-500 hover:text-neon-blue'} transition-colors`}
                     >
                         {selectedIds.length === tasks.length ? <CheckSquare className={isSanidad ? 'w-5 h-5' : 'w-3.5 h-3.5'} /> : <Square className={isSanidad ? 'w-5 h-5' : 'w-3.5 h-3.5'} />}
-                        <span>{selectedIds.length === tasks.length ? (isSanidad ? 'Deseleccionar todo' : 'DESELECCIONAR TODO') : (isSanidad ? 'Seleccionar todo' : 'SELECCIONAR TODO')}</span>
+                        <span>{selectedIds.length === tasks.length ? t('tasks.list.deselectAll') : t('tasks.list.selectAll')}</span>
                     </button>
 
                     {selectedIds.length > 0 && (
@@ -488,7 +489,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                             className={`flex items-center gap-2 ${isSanidad ? 'bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-xl text-xs font-semibold hover:bg-red-500 hover:text-white transition-all' : 'bg-red-500/10 border border-red-500/50 text-red-500 px-3 py-1 rounded-lg text-[10px] font-mono font-black hover:bg-red-500 hover:text-white transition-all'}`}
                         >
                             <Trash className={isSanidad ? 'w-4 h-4' : 'w-3 h-3'} />
-                            <span>{isSanidad ? `Borrar ${selectedIds.length} seleccionadas` : `BORRAR ${selectedIds.length} SELECCIONADAS`}</span>
+                            <span>{t('tasks.list.deleteSelected')} {selectedIds.length}</span>
                         </button>
                     )}
                 </div>
@@ -501,7 +502,7 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                         type="text"
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
-                        placeholder={isSanidad ? 'Buscar tarea o asignatura...' : 'BUSCAR TAREA O ASIGNATURA...'}
+                        placeholder={t('tasks.list.searchPlaceholder')}
                         className={styles.searchInput}
                     />
                 </div>
@@ -531,17 +532,17 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                     <div className="flex items-center gap-2">
                         <Filter className={isSanidad ? 'w-4 h-4' : 'w-3 h-3'} />
                         <div className="flex items-center gap-1">
-                            <span>{isSanidad ? `Total: ${tasks.length} tareas` : `Logs_Output: ${tasks.length}`}</span>
+                            <span>{t('tasks.list.total')}: {tasks.length}</span>
                             {selectedIds.length > 0 && (
                                 <span className={isSanidad ? 'text-[#007FFF] ml-2 font-semibold' : 'text-neon-blue ml-2'}>
-                                    | {isSanidad ? `Seleccionadas: ${selectedIds.length}` : `SELECCIONADAS: ${selectedIds.length}`}
+                                    | {t('tasks.list.selected')}: {selectedIds.length}
                                 </span>
                             )}
                         </div>
                     </div>
                     <div className={`flex items-center gap-1 ${isSanidad ? 'text-[#007FFF] cursor-help' : 'text-neon-blue cursor-help'}`}>
                         <ChevronRight className={isSanidad ? 'w-4 h-4' : 'w-3 h-3'} />
-                        <span>{isSanidad ? 'Sistema listo' : 'System_Ready'}</span>
+                        <span>{t('tasks.list.systemReady')}</span>
                     </div>
                 </div>
             </div>
@@ -550,10 +551,10 @@ export default function TaskList({ tasks, onToggleTask, onDeleteTask, onDeleteTa
                 isOpen={deleteConfirm.show}
                 onClose={handleCancelDelete}
                 onConfirm={handleConfirmDelete}
-                title="Confirmar eliminación"
-                message={deleteConfirm.message || '¿Estás seguro de que quieres eliminar esta tarea?'}
-                confirmText="Eliminar"
-                cancelText="Cancelar"
+                title={t('tasks.confirmDelete.title')}
+                message={deleteConfirm.message || t('tasks.confirmDelete.singleMessage')}
+                confirmText={t('tasks.confirmDelete.confirm')}
+                cancelText={t('tasks.confirmDelete.cancel')}
                 type="danger"
             />
         </div>
