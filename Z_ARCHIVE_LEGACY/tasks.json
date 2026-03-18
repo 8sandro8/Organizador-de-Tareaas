@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Sync DAM desde Dashboard",
+      "type": "shell",
+      "command": "python",               // en Windows, si no tira: "py"
+      "args": ["${workspaceFolder}/dash_autosync.py"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }  // así va con Ctrl+Shift+B
+    }
+  ]
+}

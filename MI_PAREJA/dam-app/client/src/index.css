@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-[#0d1117] text-gray-300;
+        /* CSS Grid Background */
+        background-image:
+            linear-gradient(to right, #ffffff05 1px, transparent 1px),
+            linear-gradient(to bottom, #ffffff05 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+}
+
+:root {
+    --neon-blue: #00f0ff;
+    --neon-purple: #bc13fe;
+    --neon-green: #39ff14;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #0d1117;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #00f0ff;
+}
+
+/* Chrome, Safari, Edge, Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+/* CYBER ANIMATIONS */
+@keyframes scanline {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.cyber-scanline {
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-scanline::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.2), transparent);
+    animation: scanline 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+.animate-glitch-hover:hover {
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+}
+
+@keyframes neon-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), 0 0 20px rgba(0, 240, 255, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.6), 0 0 40px rgba(0, 240, 255, 0.2);
+    }
+}
+
+.neon-pulse {
+    animation: neon-pulse 2s infinite;
+}
+
+.task-glitch-active {
+    transition: all 0.5s ease;
+}
+
+/* CRITICAL THREAT & OVERDRIVE */
+@keyframes card-pulse-red {
+
+    0%,
+    100% {
+        border-color: rgba(239, 68, 68, 0.3);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+    }
+
+    50% {
+        border-color: rgba(239, 68, 68, 0.8);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    }
+}
+
+.critical-threat-pulse {
+    animation: card-pulse-red 1.5s infinite;
+}
+
+@keyframes notification-slide {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    10% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    90% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.cyber-notification {
+    animation: notification-slide 4s ease-in-out forwards;
+}
+
+@keyframes text-flicker {
+    0% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}
+
+.animate-flicker {
+    animation: text-flicker 2s infinite;
+}

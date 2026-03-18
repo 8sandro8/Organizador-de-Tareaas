@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --neon-blue: #00f0ff;
+    --neon-purple: #bc13fe;
+    --neon-green: #39ff14;
+    
+    --sanidad-blue: #007FFF;
+    --sanidad-white: #f8fafc;
+    --sanidad-shadow: rgba(0, 127, 255, 0.1);
+}
+
+body {
+    background-image:
+        linear-gradient(to right, #ffffff05 1px, transparent 1px),
+        linear-gradient(to bottom, #ffffff05 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Tema Cyberpunk - Desarrollo */
+.theme-cyberpunk {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --border-color: #30363d;
+    --text-primary: #ffffff;
+    --text-secondary: #gray-300;
+    --text-muted: #gray-500;
+    --accent-primary: #00f0ff;
+    --accent-secondary: #bc13fe;
+    --accent-success: #39ff14;
+    --accent-danger: #ef4444;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --border-radius: 0.5rem;
+    --shadow-glow: 0 0 20px;
+}
+
+/* Tema Sanidad - Administrativo */
+.theme-sanidad {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f1f5f9;
+    --border-color: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent-primary: #007FFF;
+    --accent-secondary: #0ea5e9;
+    --accent-success: #10b981;
+    --accent-danger: #ef4444;
+    --font-mono: 'Inter', system-ui, sans-serif;
+    --border-radius: 1.25rem;
+    --shadow-glow: 0 4px 20px;
+}
+
+/* Scrollbar personalizada */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Animación de notificación */
+@keyframes notification-slide {
+    0% { transform: translateX(100%); opacity: 0; }
+    10% { transform: translateX(0); opacity: 1; }
+    90% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+.cyber-notification {
+    animation: notification-slide 4s ease-in-out forwards;
+}
+
+/* Pulso para completar tarea */
+@keyframes neon-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), 0 0 20px rgba(0, 240, 255, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.6), 0 0 40px rgba(0, 240, 255, 0.2);
+    }
+}
+
+.neon-pulse {
+    animation: neon-pulse 2s infinite;
+}

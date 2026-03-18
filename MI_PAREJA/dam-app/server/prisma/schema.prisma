@@ -1,0 +1,39 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Subject {
+  id    Int     @id @default(autoincrement())
+  name  String
+  code  String  @unique
+  icon  String?
+  exams Exam[]
+  tasks Task[]
+}
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  isCompleted Boolean  @default(false)
+  link        String?
+  type        String
+  priority    String   @default("MEDIUM")
+  date        DateTime @default(now())
+  duration    String?
+  resumePoint    String?
+  completionNote String?
+  completedAt    DateTime?
+  subjectId      Int
+  subject        Subject  @relation(fields: [subjectId], references: [id])
+}
+model Exam {
+  id        Int      @id @default(autoincrement())
+  title     String
+  date      DateTime
+  subjectId Int
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+}
